@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Laptops</title>
+</head>
+<body>
+    <h1>Laptops</h1>
+    <ul th:each ="laptop : ${laptops}">
+<!--        <li th:text="${laptop.name}+' - '+${laptop.price}"/>-->
+        <li th:text="${laptop}"/>
+    </ul>
+
+</body>
+</html>

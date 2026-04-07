@@ -1,29 +1,38 @@
 package org.application.projectapi.api.controllers;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.application.projectapi.api.factories.HTMLGoodFactory;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
+@Transactional
 @AllArgsConstructor
 @Controller
-@RequestMapping("/api")
 public class GoodController {
 
-    @GetMapping("/getHtml")
-    public String mainScreen(Model model) {
-        var html = new HTMLGoodFactory();
-        String htmlFactory = html.getHtmlFromAPI();
-        model.addAttribute("htmlShoppingCart", htmlFactory);
+    private final HTMLGoodFactory htmlGoodFactory;
+
+    @GetMapping("/api")
+    public String laptopCollection(Model model) {
+        model.addAttribute(
+                "htmlShoppingCart",
+                htmlGoodFactory.getHtmlFromAPI());
+
+        System.out.println(model.getAttribute("htmlShoppingCart"));
         return "mainScreen";
 
     }
 
+    @GetMapping("/ping")
+    @ResponseBody
+    public String ping() {
+        return "pong";
+    }
+
 
 }
+
