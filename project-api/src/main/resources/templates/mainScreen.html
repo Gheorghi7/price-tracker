@@ -5,8 +5,32 @@
     <title>Html from API</title>
 </head>
 <body>
-
-  <h1 th:text="${htmlShoppingCart}"></h1>
-
+    <table border="1" style="width:100%; border-collapse: collapse; text-align: left; font-family: Arial, sans-serif;">
+        <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th>Бренд</th>
+            <th>Серия / Модель</th>
+            <th>Экран</th>
+            <th>Процессор</th>
+            <th>RAM</th>
+            <th>SSD</th>
+            <th colspan="2" style="text-align: center;">Цена (MDL)</th> </tr>
+        </thead>
+        <tbody>
+        <tr th:each="data : ${source}">
+            <td th:text="${data[0]}"></td>
+            <td th:text="${data[1]}"></td>
+            <td th:text="${data[2]}"></td>
+            <td th:text="${data[3]}"></td>
+            <td th:text="${data[4]}"></td>
+            <td th:text="${data[5]}"></td>
+            <td th:text="${data[6]}"></td>
+            <td th:text="${data[7]}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/api/(brand=${filter.brand}, page=${filter.page + 1})}">
+        Следующая страница
+    </a>
 </body>
 </html>

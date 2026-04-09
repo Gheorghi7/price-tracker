@@ -1,40 +1,48 @@
 package org.application.projectapi.api.factories;
 
+import org.application.projectapi.api.dto.LaptopDto;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class HTMLGoodFactory {
-    private final String RESOURSE_OF_WORK_AT = "https://xstore.md/ru/noutbuki?gad_source=1&gad_campaignid=17547888846&gbraid=0AAAAABXAcq3-UjJfufTBaJ5sHZu6LFpDi&gclid=CjwKCAjw1tLOBhAMEiwAiPkRHudg5t-4s4J2kWnIu_OzyspkGuPjfnst85rt3xdJ15QQG1zwqSW5UBoCkAUQAvD_BwE";
-    private final String CHROME_DRIVER_PATH = "C:\\Users\\48574\\Desktop\\programing_stuff\\TryCodingPeriod\\priceTracker\\project-api\\src\\main\\resources\\static\\chromedriver-win64\\chromedriver.exe";
-    private final String LOCATION_OF_USER_DATA_ON_COMPUTER = "C:/Users/48574/AppData/Local/Google/Chrome/User Data";
 
-    public String getHtmlFromAPI() {
-//        System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_PATH);
-//        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("user-data-dir:%s".formatted(LOCATION_OF_USER_DATA_ON_COMPUTER));
-//        options.addArguments("profile-directory=Default");
-//        WebDriver driver = new ChromeDriver(options);
-//        driver.get(RESOURSE_OF_WORK_AT);
-//        String html = driver.getPageSource();
-//        return Jsoup.parse(html).select("._2CfekcK7").text();
-        String json = "";
+    private final String RESOURCE_OF_WORK_AT = "https://xstore.md/ru/noutbuki?brand=%s&page=%d";
+
+
+    public String create(LaptopDto filter) {
+      return RESOURCE_OF_WORK_AT.formatted(filter.getBrand(), filter.getPage());
+    }
+
+    public List getHtmlFromAPI() {
+        List<List<String>> json = new ArrayList<>();
         Connection.Response respForCookie = null;
         try {
-            respForCookie = Jsoup.connect(RESOURSE_OF_WORK_AT).method(Connection.Method.GET).execute();
-            Element doc = Jsoup.connect(RESOURSE_OF_WORK_AT).userAgent("Chrome").cookies(respForCookie.cookies()).get();
-            for(var i: doc.select(".card-product")){
-                json += "{%s}\n".formatted(i.select(".card-xt").text());
+            respForCookie = Jsoup.connect(RESOURCE_OF_WORK_AT).method(Connection.Method.GET).execute();
+            Element doc = Jsoup.connect(RESOURCE_OF_WORK_AT).userAgent("Chrome").cookies(respForCookie.cookies()).get();
+            for (var i : doc.select(".card-product")) {
+                String[] tempList = i.select(".info-wrap > a").text().split(" ");
+                List<String> tempAttr = Arrays.asList(i.select(".xp-attr").text().split("/"));
+                json.add(List.of(
+                        "%s\n".formatted(tempList[0]),
+                        "%s\n".formatted(String.join(" ", Arrays.asList(tempList).subList(1, tempList.length))),
+                        "%s\n".formatted(tempAttr.get(0)),
+                        "%s\n".formatted(tempAttr.get(1)),
+                        "%s\n".formatted(tempAttr.get(2)),
+                        "%s\n".formatted(tempAttr.get(3)),
+                        "%s\n".formatted(i.select(".xprice-old > span").text()),
+                        "%s\n".formatted(i.select(".xprice").text())));
+
             }
+
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
