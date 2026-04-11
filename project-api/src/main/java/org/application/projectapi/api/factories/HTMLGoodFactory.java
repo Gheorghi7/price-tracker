@@ -4,29 +4,28 @@ import org.application.projectapi.api.dto.LaptopDto;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+@Scope("prototype")
 @Service
 public class HTMLGoodFactory {
 
     private final String RESOURCE_OF_WORK_AT = "https://xstore.md/ru/noutbuki?brand=%s&page=%d";
-
-
-    public String create(LaptopDto filter) {
-      return RESOURCE_OF_WORK_AT.formatted(filter.getBrand(), filter.getPage());
-    }
-
-    public List getHtmlFromAPI() {
+    public List getHtmlFromAPI(LaptopDto filter) {
+        String url = RESOURCE_OF_WORK_AT.formatted(filter.getBrand(), filter.getPage());
         List<List<String>> json = new ArrayList<>();
         Connection.Response respForCookie = null;
         try {
-            respForCookie = Jsoup.connect(RESOURCE_OF_WORK_AT).method(Connection.Method.GET).execute();
-            Element doc = Jsoup.connect(RESOURCE_OF_WORK_AT).userAgent("Chrome").cookies(respForCookie.cookies()).get();
+            respForCookie = Jsoup.connect(url).method(Connection.Method.GET).execute();
+            Element doc = Jsoup.connect(url).userAgent("Chrome").cookies(respForCookie.cookies()).get();
             for (var i : doc.select(".card-product")) {
                 String[] tempList = i.select(".info-wrap > a").text().split(" ");
                 List<String> tempAttr = Arrays.asList(i.select(".xp-attr").text().split("/"));
@@ -48,6 +47,8 @@ public class HTMLGoodFactory {
         }
         return json;
     }
+
+
 
 }
 
