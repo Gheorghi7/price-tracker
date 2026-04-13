@@ -1,24 +1,23 @@
 package org.application.projectapi.api.factories;
 
 import org.application.projectapi.api.dto.LaptopDto;
+import org.application.projectapi.api.exeptions.CheckUrl;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 @Scope("prototype")
 @Service
 public class HTMLGoodFactory {
 
     private final String RESOURCE_OF_WORK_AT = "https://xstore.md/ru/noutbuki?brand=%s&page=%d";
+
     public List getHtmlFromAPI(LaptopDto filter) {
         String url = RESOURCE_OF_WORK_AT.formatted(filter.getBrand(), filter.getPage());
         List<List<String>> json = new ArrayList<>();
@@ -42,15 +41,20 @@ public class HTMLGoodFactory {
             }
 
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return json;
     }
 
 
 
+
 }
+
+
+
 
 
 
